@@ -102,7 +102,7 @@ def generate_qr():
         img = qr.make_image(fill_color="black", back_color="white")
         img.save(qr_code_path)
 
-        return jsonify({'qr_code_path': f'/{qr_code_path}'})
+        return jsonify({'qr_code_path': f'/{qr_code_path}'}) # return the qr code path to the frontend
     except Exception as e:
         print(f"QR Generation Error: {str(e)}")  # For debugging
         return jsonify({'error': str(e)}), 400
@@ -139,6 +139,29 @@ def encrypt_file():
             return jsonify(encrypted_data)
     except Exception as e:
         return jsonify({'error': str(e)}), 400
+    
+# ------------ decrypt qr code -------------
+@app.route('/decrypt_qr', methods=['POST'])
+def decrypt_qr():
+    try:
+        data = request.get_json()
+        encrypted_data = data['encrypted_data']
+        
+        # Use the key ID from the encrypted data (if stored) or prompt the user
+        key_id = int(data.get('key_id', 0))  # Default to key ID 0 for simplicity
+        
+        if key_id not in keys:
+            return jsonify({'error': 'Invalid key ID'}), 400
+        
+        # Decrypt the message
+        decrypted_message = crypto_manager.decrypt_message(
+            encrypted_data,
+            keys[key_id]['private_key']
+        )
+        
+        return jsonify({'decrypted_message': decrypted_message})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 400
 
 @app.route('/decrypt_file', methods=['POST'])
 def decrypt_file():
@@ -173,3 +196,6 @@ def decrypt_file():
 
 if __name__ == '__main__':
     app.run(debug=True) 
+
+
+    

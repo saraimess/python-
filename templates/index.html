@@ -14,6 +14,8 @@
     />
     <!-- Add Bootstrap tooltips -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
     <style>
       body {
         background-color: #1a1a1a;
@@ -309,8 +311,26 @@
           </div>
         </div>
       </div>
+<div class="card mb-4">
+  <div class="card-header">
+      <h5 class="mb-0">
+          QR Code Scanner
+          <i class="fas fa-info-circle tooltip-icon" data-bs-toggle="tooltip" title="Scan a QR code to decrypt the message."></i>
+      </h5>
+  </div>
+  <div class="card-body">
+      <!-- QR Code Scanner Input -->
+      <input type="file" id="qrScanner" accept="image/*" style="display: none;" />
+      <button id="scanQRButton" class="btn btn-primary">Scan QR Code</button>
 
-      <!-- Add this new section after the QR Code Section and before the Decryption Section -->
+      <!-- Placeholder for Decrypted Message -->
+      <div id="decryptedMessageResult" class="mt-3" style="display: none;">
+          <h6>Decrypted Message:</h6>
+          <pre id="decryptedMessageContent" class="bg-light p-2"></pre>
+      </div>
+  </div>
+</div>
+
       <div class="card mb-4">
         <div class="card-header">
           <h5 class="mb-0">
@@ -423,7 +443,7 @@
         </div>
       </div>
 
-      <!-- Add this new section before the closing container div -->
+      
       <div class="card mb-4">
         <div class="card-header">
           <h5 class="mb-0">
@@ -777,7 +797,7 @@
           2
         );
       });
-
+// generate qr code 
       document
         .getElementById("generateQR")
         .addEventListener("click", async () => {
@@ -1163,6 +1183,99 @@ function getHint(challengeType) {
 
       // Initialize challenges when page loads
       document.addEventListener("DOMContentLoaded", initializeChallenges);
+      
+      
+    
+      
+
+// QR Code Scanner Logic
+// opens file dialogue 
+document.getElementById('scanQRButton').addEventListener('click', () => {
+    document.getElementById('qrScanner').click();
+});
+
+document.getElementById('qrScanner').addEventListener('change', async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    try {
+        // Load the image
+        const image = await loadImage(file);
+
+        // Decode the QR code
+        const qrCodeData = decodeQRCode(image);
+
+        if (qrCodeData) {
+            // Send the encrypted data to the backend for decryption
+            const decryptedMessage = await decryptQRCodeData(qrCodeData);
+
+            // Display the decrypted message
+            document.getElementById('decryptedMessageResult').style.display = 'block';
+            document.getElementById('decryptedMessageContent').textContent = decryptedMessage;
+        } else {
+            alert('Failed to decode QR code. Please try again.');
+        }
+    } catch (error) {
+        console.error('QR Code Scanning Error:', error);
+        alert('An error occurred while scanning the QR code.');
+    }
+});
+
+// Function to load an image file
+function loadImage(file) {
+    return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.src = URL.createObjectURL(file);
+        img.onload = () => resolve(img);
+        img.onerror = (error) => reject(error);
+    });
+}
+
+// Function to decode QR code using jsQR
+function decodeQRCode(image) {
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d');
+    canvas.width = image.width;
+    canvas.height = image.height;
+    context.drawImage(image, 0, 0, canvas.width, canvas.height);
+    const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+
+    const qrCode = jsQR(imageData.data, imageData.width, imageData.height);
+    return qrCode ? qrCode.data : null;
+}
+
+// Function to send encrypted data to the backend for decryption
+async function decryptQRCodeData(encryptedData) {
+    try {
+        const response = await fetch('/decrypt_qr', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json', // Specifies that the request body is in JSON format
+            },
+            body: JSON.stringify({ encrypted_data: JSON.parse(encryptedData) }),
+        });
+
+        const data = await response.json();
+        if (data.error) {
+            throw new Error(data.error);
+        }
+
+        return data.decrypted_message;
+    } catch (error) {
+        console.error('Decryption error:', error);
+        alert('Failed to decrypt QR code data.');
+    }
+}
+
+
+
+
+
+
+
+
+
+
     </script>
   </body>
 </html>
