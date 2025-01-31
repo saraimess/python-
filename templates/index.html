@@ -1,0 +1,1168 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cryptographic Learning Tool</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    />
+    <!-- Add Bootstrap tooltips -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+      body {
+        background-color: #1a1a1a;
+        color: #ffffff;
+      }
+      .container {
+        max-width: 1000px;
+      }
+      .key-info {
+        word-break: break-all;
+      }
+      .card {
+        background-color: #2a2a2a;
+        border: 1px solid #444;
+        margin-bottom: 20px;
+      }
+      .btn-primary,
+      .btn-success,
+      .btn-warning {
+        background-color: #007bff;
+        border: none;
+      }
+      .btn-primary:hover,
+      .btn-success:hover,
+      .btn-warning:hover {
+        background-color: #0056b3;
+      }
+      h1,
+      h5 {
+        color: #00ff00;
+      }
+      pre {
+        background-color: #333;
+        color: #00ff00;
+      }
+      .guide {
+        margin-top: 20px;
+        background-color: #333;
+        padding: 15px;
+        border-radius: 5px;
+      }
+      .info-box {
+        background-color: #333;
+        padding: 15px;
+        border-radius: 5px;
+        margin: 10px 0;
+        border-left: 4px solid #007bff;
+      }
+      .process-visualization {
+        background-color: #333;
+        padding: 15px;
+        border-radius: 5px;
+        margin: 10px 0;
+        text-align: center;
+      }
+      .step-indicator {
+        display: flex;
+        justify-content: space-between;
+        margin: 20px 0;
+      }
+      .step {
+        flex: 1;
+        text-align: center;
+        position: relative;
+      }
+      .step::after {
+        content: "";
+        position: absolute;
+        width: 100%;
+        height: 2px;
+        background: #444;
+        top: 50%;
+        left: 50%;
+        z-index: -1;
+      }
+      .step:last-child::after {
+        display: none;
+      }
+      .step-number {
+        background: #007bff;
+        color: white;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 5px;
+      }
+      .tooltip-icon {
+        cursor: pointer;
+        margin-left: 5px;
+        color: #007bff;
+      }
+      .info-modal .modal-content {
+        background-color: #2a2a2a;
+        color: #ffffff;
+      }
+
+      .info-modal .modal-header {
+        border-bottom: 1px solid #444;
+      }
+
+      .info-modal .modal-footer {
+        border-top: 1px solid #444;
+      }
+
+      .learn-more-btn {
+        font-size: 0.9em;
+        padding: 2px 8px;
+        margin-left: 10px;
+      }
+
+      .concept-icon {
+        font-size: 2em;
+        margin-bottom: 15px;
+        color: #007bff;
+      }
+
+      .key-concept {
+        background-color: #333;
+        padding: 15px;
+        border-radius: 5px;
+        margin: 10px 0;
+        border-left: 4px solid #28a745;
+      }
+
+      .challenge-card {
+        background-color: #333;
+        padding: 20px;
+        border-radius: 5px;
+        margin-bottom: 15px;
+      }
+
+      .badge {
+        font-size: 0.9em;
+      }
+
+      .btn-outline-primary {
+        color: #007bff;
+        border-color: #007bff;
+      }
+
+      .btn-outline-primary:hover {
+        background-color: #007bff;
+        color: white;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container my-5">
+      <h1 class="text-center mb-4">Cryptographic Learning Tool</h1>
+
+      <!-- Process Overview -->
+      <div class="step-indicator mb-4">
+        <div class="step">
+          <div class="step-number">1</div>
+          <div>Key Generation</div>
+        </div>
+        <div class="step">
+          <div class="step-number">2</div>
+          <div>Encryption</div>
+        </div>
+        <div class="step">
+          <div class="step-number">3</div>
+          <div>QR Code</div>
+        </div>
+        <div class="step">
+          <div class="step-number">4</div>
+          <div>Decryption</div>
+        </div>
+      </div>
+
+      <!-- Key Generation Section -->
+      <div class="card">
+        <div class="card-header">
+          <h5 class="mb-0">
+            Step 1: Key Generation
+            <button
+              class="btn btn-sm btn-info learn-more-btn"
+              onclick="showModal('rsaModal')"
+            >
+              Learn More
+            </button>
+          </h5>
+        </div>
+        <div class="card-body">
+          <div class="info-box">
+            <h6>How RSA Key Generation Works:</h6>
+            <ol>
+              <li>Two large prime numbers (p and q) are generated</li>
+              <li>Their product (n = p × q) becomes part of the public key</li>
+              <li>A public exponent (e) is chosen</li>
+              <li>A private exponent (d) is calculated</li>
+              <li>Public key = (n, e), Private key = (n, d)</li>
+            </ol>
+          </div>
+          <button id="generateKeys" class="btn btn-primary">
+            Generate New Key Pair
+          </button>
+          <div id="keyInfo" class="mt-3 key-info" style="display: none">
+            <p><strong>Key ID:</strong> <span id="keyId"></span></p>
+            <p><strong>Public Key:</strong> <span id="publicKey"></span></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Encryption Section -->
+      <div class="card">
+        <div class="card-header">
+          <h5 class="mb-0">
+            Step 2: Hybrid Encryption
+            <button
+              class="btn btn-sm btn-info learn-more-btn"
+              onclick="showModal('hybridModal')"
+            >
+              Learn More
+            </button>
+          </h5>
+        </div>
+        <div class="card-body">
+          <div class="info-box">
+            <h6>Hybrid Encryption Process:</h6>
+            <ol>
+              <li>Generate a random AES key</li>
+              <li>Encrypt the message with AES</li>
+              <li>Encrypt the AES key with RSA</li>
+              <li>Combine both for secure transmission</li>
+            </ol>
+          </div>
+          <div class="mb-3">
+            <label for="encryptKeyId" class="form-label">Key ID</label>
+            <input type="number" class="form-control" id="encryptKeyId" />
+          </div>
+          <div class="mb-3">
+            <label for="messageToEncrypt" class="form-label">Message</label>
+            <textarea
+              class="form-control"
+              id="messageToEncrypt"
+              rows="3"
+            ></textarea>
+          </div>
+          <button id="encrypt" class="btn btn-success">Encrypt</button>
+          <div
+            id="encryptionProcess"
+            class="process-visualization mt-3"
+            style="display: none"
+          >
+            <!-- Animation will be added here via JavaScript -->
+          </div>
+          <div id="encryptedResult" class="mt-3 key-info" style="display: none">
+            <h6>Encrypted Data:</h6>
+            <pre id="encryptedData" class="bg-light p-2"></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- QR Code Section -->
+      <div class="card">
+        <div class="card-header">
+          <h5 class="mb-0">
+            Step 3: QR Code Generation
+            <i
+              class="fas fa-info-circle tooltip-icon"
+              data-bs-toggle="tooltip"
+              title="The encrypted message is encoded into a QR code for easy sharing."
+            ></i>
+          </h5>
+        </div>
+        <div class="card-body">
+          <div class="info-box">
+            <h6>QR Code Process:</h6>
+            <p>
+              The encrypted message is converted into a QR code, making it easy
+              to share and scan. The QR code contains all the necessary
+              information for decryption.
+            </p>
+          </div>
+          <button id="generateQR" class="btn btn-warning">
+            Generate QR Code
+          </button>
+          <div id="qrCodeResult" class="mt-3 text-center" style="display: none">
+            <h6>QR Code:</h6>
+            <img
+              id="qrCodeImage"
+              src=""
+              alt="QR Code"
+              style="max-width: 200px; margin: 10px auto"
+            />
+            <p class="small text-muted">
+              Scan this QR code to share the encrypted message
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Add this new section after the QR Code Section and before the Decryption Section -->
+      <div class="card mb-4">
+        <div class="card-header">
+          <h5 class="mb-0">
+            File Encryption/Decryption
+            <i
+              class="fas fa-info-circle tooltip-icon"
+              data-bs-toggle="tooltip"
+              title="Securely encrypt and decrypt files using hybrid encryption"
+            ></i>
+          </h5>
+        </div>
+        <div class="card-body">
+          <!-- File Encryption -->
+          <div class="mb-4">
+            <div class="info-box">
+              <h6>Supported File Types:</h6>
+              <p>PDF, Images (PNG, JPG, GIF), Documents (DOC, DOCX, TXT)</p>
+              <p>Maximum file size: 16MB</p>
+            </div>
+
+            <h6 class="mt-4">Encrypt File</h6>
+            <div class="mb-3">
+              <label for="encryptFileKeyId" class="form-label">Key ID</label>
+              <input type="number" class="form-control" id="encryptFileKeyId" />
+            </div>
+            <div class="mb-3">
+              <label for="fileToEncrypt" class="form-label">Select File</label>
+              <input type="file" class="form-control" id="fileToEncrypt" />
+            </div>
+            <button id="encryptFile" class="btn btn-success">
+              Encrypt File
+            </button>
+            <div id="encryptedFileResult" class="mt-3" style="display: none">
+              <h6>Encrypted File Data:</h6>
+              <pre id="encryptedFileData" class="bg-light p-2"></pre>
+            </div>
+          </div>
+
+          <!-- File Decryption -->
+          <div class="mb-4">
+            <h6>Decrypt File</h6>
+            <div class="mb-3">
+              <label for="decryptFileKeyId" class="form-label">Key ID</label>
+              <input type="number" class="form-control" id="decryptFileKeyId" />
+            </div>
+            <div class="mb-3">
+              <label for="fileEncryptedData" class="form-label"
+                >Encrypted File Data (JSON)</label
+              >
+              <textarea
+                class="form-control"
+                id="fileEncryptedData"
+                rows="3"
+              ></textarea>
+            </div>
+            <button id="decryptFile" class="btn btn-warning">
+              Decrypt & Download File
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Decryption Section -->
+      <div class="card">
+        <div class="card-header">
+          <h5 class="mb-0">
+            Step 4: Decryption
+            <i
+              class="fas fa-info-circle tooltip-icon"
+              data-bs-toggle="tooltip"
+              title="The private key is used to decrypt the AES key, which then decrypts the message."
+            ></i>
+          </h5>
+        </div>
+        <div class="card-body">
+          <div class="info-box">
+            <h6>Decryption Process:</h6>
+            <ol>
+              <li>Use RSA private key to decrypt the AES key</li>
+              <li>Use the decrypted AES key to decrypt the message</li>
+              <li>Verify the message integrity</li>
+            </ol>
+          </div>
+          <div class="mb-3">
+            <label for="decryptKeyId" class="form-label">Key ID</label>
+            <input type="number" class="form-control" id="decryptKeyId" />
+          </div>
+          <div class="mb-3">
+            <label for="encryptedMessage" class="form-label"
+              >Encrypted Message (JSON)</label
+            >
+            <textarea
+              class="form-control"
+              id="encryptedMessage"
+              rows="3"
+            ></textarea>
+          </div>
+          <button id="decrypt" class="btn btn-warning">Decrypt</button>
+          <div
+            id="decryptionProcess"
+            class="process-visualization mt-3"
+            style="display: none"
+          >
+            <!-- Animation will be added here via JavaScript -->
+          </div>
+          <div id="decryptedResult" class="mt-3" style="display: none">
+            <h6>Decrypted Message:</h6>
+            <pre id="decryptedMessage" class="bg-light p-2"></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Add this new section before the closing container div -->
+      <div class="card mb-4">
+        <div class="card-header">
+          <h5 class="mb-0">
+            Cryptography Challenges
+            <i
+              class="fas fa-gamepad tooltip-icon"
+              data-bs-toggle="tooltip"
+              title="Learn cryptography through fun challenges!"
+            ></i>
+          </h5>
+        </div>
+        <div class="card-body">
+          <div class="info-box mb-4">
+            <h6>Welcome to Crypto Challenges!</h6>
+            <p>
+              Test your knowledge and learn about different encryption methods
+              through interactive challenges.
+            </p>
+          </div>
+
+          <!-- Challenge 1: Caesar Cipher -->
+          <div class="challenge-card mb-4">
+            <h6 class="d-flex justify-content-between">
+              Challenge 1: Caesar Cipher
+              <span class="badge bg-primary" id="challenge1Score"
+                >Score: 0/3</span
+              >
+            </h6>
+            <div class="info-box">
+              <p>
+                The Caesar cipher shifts each letter in the message by a fixed
+                number of positions.
+              </p>
+              <p>
+                Example: With shift 3, 'A' becomes 'D', 'B' becomes 'E', etc.
+              </p>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Encrypted Message:</label>
+              <div class="alert alert-secondary" id="caesarChallenge"></div>
+            </div>
+            <div class="mb-3">
+              <label for="caesarAnswer" class="form-label">Your Answer:</label>
+              <input type="text" class="form-control" id="caesarAnswer" />
+            </div>
+            <button class="btn btn-primary" onclick="checkCaesarAnswer()">
+              Submit Answer
+            </button>
+            <button class="btn btn-secondary ms-2" onclick="getHint('caesar')">
+              Get Hint
+            </button>
+            <div id="caesarHint" class="mt-3 alert alert-info" style="display: none;"></div>
+          </div>
+
+          <!-- Challenge 2: Pattern Recognition -->
+          <div class="challenge-card mb-4">
+            <h6 class="d-flex justify-content-between">
+              Challenge 2: Guess the Encryption
+              <span class="badge bg-primary" id="challenge2Score"
+                >Score: 0/3</span
+              >
+            </h6>
+            <div class="info-box">
+              <p>
+                Look at the encrypted messages and guess which encryption method
+                was used.
+              </p>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Example Messages:</label>
+              <pre class="bg-dark text-light p-2" id="encryptionExample"></pre>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Choose the encryption method:</label>
+              <div class="d-flex gap-2">
+                <button
+                  class="btn btn-outline-primary"
+                  onclick="checkEncryptionGuess('aes')"
+                >
+                  AES
+                </button>
+                <button
+                  class="btn btn-outline-primary"
+                  onclick="checkEncryptionGuess('rsa')"
+                >
+                  RSA
+                </button>
+                <button
+                  class="btn btn-outline-primary"
+                  onclick="checkEncryptionGuess('base64')"
+                >
+                  Base64
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Challenge 3: Decrypt with Hints -->
+          <div class="challenge-card">
+            <h6 class="d-flex justify-content-between">
+              Challenge 3: Decrypt the Message
+              <span class="badge bg-primary" id="challenge3Score"
+                >Score: 0/3</span
+              >
+            </h6>
+            <div class="info-box">
+              <p>Use the hints provided to decrypt the message.</p>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Encrypted Message:</label>
+              <div class="alert alert-secondary" id="decryptChallenge"></div>
+            </div>
+            <div class="mb-3">
+              <label for="decryptAnswer" class="form-label">Your Answer:</label>
+              <input type="text" class="form-control" id="decryptAnswer" />
+            </div>
+            <button class="btn btn-primary" onclick="checkDecryptAnswer()">
+              Submit Answer
+            </button>
+            <button class="btn btn-secondary ms-2" onclick="getHint('decrypt')">
+              Get Hint
+            </button>
+            <div
+              id="decryptHint"
+              class="mt-3 alert alert-info"
+              style="display: none"
+            ></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RSA Modal -->
+    <div class="modal fade info-modal" id="rsaModal" tabindex="-1">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">
+              <i class="fas fa-key"></i> Understanding RSA Encryption
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div class="text-center concept-icon">
+              <i class="fas fa-lock"></i>
+            </div>
+            <div class="key-concept">
+              <h6>What is RSA?</h6>
+              <p>RSA is like having a special padlock with two keys:</p>
+              <ul>
+                <li>
+                  <strong>Public Key:</strong> Anyone can use this to lock
+                  (encrypt) messages for you
+                </li>
+                <li>
+                  <strong>Private Key:</strong> Only you can use this to unlock
+                  (decrypt) messages
+                </li>
+              </ul>
+            </div>
+            <div class="key-concept">
+              <h6>How it Works:</h6>
+              <ol>
+                <li>Your public key is shared with others</li>
+                <li>They use it to encrypt messages for you</li>
+                <li>Only your private key can decrypt these messages</li>
+                <li>
+                  Even if someone has your public key, they can't read the
+                  messages
+                </li>
+              </ol>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AES Modal -->
+    <div class="modal fade info-modal" id="aesModal" tabindex="-1">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">
+              <i class="fas fa-shield-alt"></i> Understanding AES Encryption
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div class="text-center concept-icon">
+              <i class="fas fa-key"></i>
+            </div>
+            <div class="key-concept">
+              <h6>What is AES?</h6>
+              <p>
+                AES is like having a secret code that both sender and receiver
+                know:
+              </p>
+              <ul>
+                <li>It's faster than RSA for encrypting messages</li>
+                <li>Both parties need the same key to encrypt and decrypt</li>
+                <li>It's used for securing most internet traffic today</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Hybrid Encryption Modal -->
+    <div class="modal fade info-modal" id="hybridModal" tabindex="-1">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">
+              <i class="fas fa-shield-alt"></i> Hybrid Encryption Explained
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div class="text-center concept-icon">
+              <i class="fas fa-random"></i>
+            </div>
+            <div class="key-concept">
+              <h6>Why Use Both RSA and AES?</h6>
+              <p>We combine the best of both worlds:</p>
+              <ul>
+                <li>RSA securely shares the AES key</li>
+                <li>AES quickly encrypts the actual message</li>
+                <li>This gives us both security and speed</li>
+              </ul>
+            </div>
+            <div class="key-concept">
+              <h6>The Process:</h6>
+              <ol>
+                <li>Generate a random AES key</li>
+                <li>Encrypt the message with AES</li>
+                <li>Encrypt the AES key with RSA</li>
+                <li>Send both encrypted items together</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Initialize tooltips
+      var tooltipTriggerList = [].slice.call(
+        document.querySelectorAll('[data-bs-toggle="tooltip"]')
+      );
+      var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+      });
+
+      // Visualization functions
+      function showEncryptionProcess(message) {
+        const process = document.getElementById("encryptionProcess");
+        process.style.display = "block";
+        process.innerHTML = `
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="text-center">
+                        <div class="mb-2">Original Message</div>
+                        <div class="border p-2 rounded">${message}</div>
+                    </div>
+                    <div><i class="fas fa-arrow-right"></i></div>
+                    <div class="text-center">
+                        <div class="mb-2">AES Encryption</div>
+                        <div class="border p-2 rounded">
+                            <i class="fas fa-lock"></i>
+                            <div>Encrypting...</div>
+                        </div>
+                    </div>
+                    <div><i class="fas fa-arrow-right"></i></div>
+                    <div class="text-center">
+                        <div class="mb-2">Final Encrypted</div>
+                        <div class="border p-2 rounded">
+                            <i class="fas fa-shield-alt"></i>
+                            <div>Secured</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+      }
+
+      function showDecryptionProcess() {
+        const process = document.getElementById("decryptionProcess");
+        process.style.display = "block";
+        process.innerHTML = `
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="text-center">
+                        <div class="mb-2">Encrypted Data</div>
+                        <div class="border p-2 rounded">encrypted_data</div>
+                    </div>
+                    <div><i class="fas fa-arrow-right"></i></div>
+                    <div class="text-center">
+                        <div class="mb-2">AES Decryption</div>
+                        <div class="border p-2 rounded">****</div>
+                    </div>
+                    <div><i class="fas fa-arrow-right"></i></div>
+                    <div class="text-center">
+                        <div class="mb-2">Original Message</div>
+                        <div class="border p-2 rounded">decrypted_message</div>
+                    </div>
+                </div>
+            `;
+      }
+
+      // Event Listeners
+      document
+        .getElementById("generateKeys")
+        .addEventListener("click", async () => {
+          const response = await fetch("/generate_keys", { method: "POST" });
+          const data = await response.json();
+
+          document.getElementById("keyInfo").style.display = "block";
+          document.getElementById("keyId").textContent = data.key_id;
+          document.getElementById("publicKey").textContent = data.public_key;
+        });
+
+      document.getElementById("encrypt").addEventListener("click", async () => {
+        const keyId = document.getElementById("encryptKeyId").value;
+        const message = document.getElementById("messageToEncrypt").value;
+
+        showEncryptionProcess(message);
+
+        const response = await fetch("/encrypt", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ key_id: keyId, message: message }),
+        });
+
+        const data = await response.json();
+        document.getElementById("encryptedResult").style.display = "block";
+        document.getElementById("encryptedData").textContent = JSON.stringify(
+          data,
+          null,
+          2
+        );
+      });
+
+      document
+        .getElementById("generateQR")
+        .addEventListener("click", async () => {
+          try {
+            const encryptedDataElement =
+              document.getElementById("encryptedData");
+            if (!encryptedDataElement.textContent) {
+              alert("Please encrypt a message first");
+              return;
+            }
+
+            const encryptedData = JSON.parse(encryptedDataElement.textContent);
+            const response = await fetch("/generate_qr", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ encrypted_data: encryptedData }),
+            });
+
+            if (!response.ok) {
+              throw new Error("Failed to generate QR code");
+            }
+
+            const data = await response.json();
+            if (data.error) {
+              throw new Error(data.error);
+            }
+
+            document.getElementById("qrCodeResult").style.display = "block";
+            document.getElementById("qrCodeImage").src = data.qr_code_path;
+          } catch (error) {
+            console.error("Error generating QR code:", error);
+            alert("Error generating QR code: " + error.message);
+          }
+        });
+
+      document.getElementById("decrypt").addEventListener("click", async () => {
+        const keyId = document.getElementById("decryptKeyId").value;
+        const encryptedData = JSON.parse(
+          document.getElementById("encryptedMessage").value
+        );
+
+        showDecryptionProcess();
+
+        const response = await fetch("/decrypt", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            key_id: keyId,
+            encrypted_data: encryptedData,
+          }),
+        });
+
+        const data = await response.json();
+        document.getElementById("decryptedResult").style.display = "block";
+        document.getElementById("decryptedMessage").textContent =
+          data.decrypted_message;
+      });
+
+      // Function to show modals
+      function showModal(modalId) {
+        const modal = new bootstrap.Modal(document.getElementById(modalId));
+        modal.show();
+      }
+
+      // Add tooltips to important elements
+      const tooltips = [
+        {
+          element: "#encryptKeyId",
+          title: "Enter the Key ID you received when generating keys",
+        },
+        {
+          element: "#messageToEncrypt",
+          title: "Type the message you want to encrypt",
+        },
+        {
+          element: "#decryptKeyId",
+          title: "Enter the Key ID that was used for encryption",
+        },
+        {
+          element: "#encryptedMessage",
+          title: "Paste the encrypted message or scan a QR code",
+        },
+      ];
+
+      tooltips.forEach((tooltip) => {
+        new bootstrap.Tooltip(document.querySelector(tooltip.element), {
+          title: tooltip.title,
+          placement: "top",
+        });
+      });
+
+      // File Encryption
+      document
+        .getElementById("encryptFile")
+        .addEventListener("click", async () => {
+          const keyId = document.getElementById("encryptFileKeyId").value;
+          const fileInput = document.getElementById("fileToEncrypt");
+
+          if (!fileInput.files[0]) {
+            alert("Please select a file");
+            return;
+          }
+
+          const formData = new FormData();
+          formData.append("file", fileInput.files[0]);
+          formData.append("key_id", keyId);
+
+          try {
+            const response = await fetch("/encrypt_file", {
+              method: "POST",
+              body: formData,
+            });
+
+            const data = await response.json();
+            if (data.error) {
+              throw new Error(data.error);
+            }
+
+            document.getElementById("encryptedFileResult").style.display =
+              "block";
+            document.getElementById("encryptedFileData").textContent =
+              JSON.stringify(data, null, 2);
+          } catch (error) {
+            alert("Error encrypting file: " + error.message);
+          }
+        });
+
+      // File Decryption
+      document
+        .getElementById("decryptFile")
+        .addEventListener("click", async () => {
+          try {
+            const keyId = document.getElementById("decryptFileKeyId").value;
+            const encryptedData = JSON.parse(
+              document.getElementById("fileEncryptedData").value
+            );
+
+            const response = await fetch("/decrypt_file", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                key_id: keyId,
+                encrypted_data: encryptedData,
+              }),
+            });
+
+            if (!response.ok) {
+              const error = await response.json();
+              throw new Error(error.error || "Failed to decrypt file");
+            }
+
+            // Create a blob from the response and download it
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = encryptedData.filename;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            a.remove();
+          } catch (error) {
+            alert("Error decrypting file: " + error.message);
+          }
+        });
+
+      // Challenge Data
+      const challenges = {
+        caesar: {
+          messages: [
+            { encrypted: "KHOOR", original: "HELLO", shift: 3 },
+            { encrypted: "FUBSWR", original: "CRYPTO", shift: 3 },
+            { encrypted: "SXCCOH", original: "PUZZLE", shift: 3 },
+          ],
+          currentIndex: 0,
+          score: 0,
+          hints: [
+            "Try shifting each letter backwards",
+            "The shift value is 3",
+            "A→X, B→Y, C→Z pattern",
+          ],
+          hintIndex: 0,
+        },
+        encryption: {
+          examples: [
+            { method: "base64", text: "SGVsbG8gV29ybGQ=" },
+            { method: "aes", text: "{iv: ..., ciphertext: ..., tag: ...}" },
+            { method: "rsa", text: "0x4a2f1b..." },
+          ],
+          currentIndex: 0,
+          score: 0,
+        },
+        decrypt: {
+          messages: [
+            { encrypted: "TBBQ", hint: "ROT13 cipher", answer: "GOOD" },
+            {
+              encrypted: "01001000 01001001",
+              hint: "Binary to ASCII",
+              answer: "HI",
+            },
+            {
+              encrypted: "48 45 59",
+              hint: "Convert hex numbers to letters",
+              answer: "HEY",
+            },
+          ],
+          currentIndex: 0,
+          score: 0,
+          hints: [
+            "ROT13 cipher",
+            "Binary to ASCII",
+            "Convert hex numbers to letters",
+          ],
+          hintIndex: 0,
+        },
+      };
+
+      // Initialize challenges
+      function initializeChallenges() {
+        document.getElementById("caesarChallenge").textContent =
+          challenges.caesar.messages[challenges.caesar.currentIndex].encrypted;
+
+        document.getElementById("encryptionExample").textContent =
+          challenges.encryption.examples[
+            challenges.encryption.currentIndex
+          ].text;
+
+        document.getElementById("decryptChallenge").textContent =
+          challenges.decrypt.messages[
+            challenges.decrypt.currentIndex
+          ].encrypted;
+      }
+
+      // Check Caesar Cipher answer
+      function checkCaesarAnswer() {
+        const answer = document
+          .getElementById("caesarAnswer")
+          .value.toUpperCase();
+        const currentChallenge =
+          challenges.caesar.messages[challenges.caesar.currentIndex];
+
+        if (answer === currentChallenge.original) {
+          challenges.caesar.score++;
+          document.getElementById(
+            "challenge1Score"
+          ).textContent = `Score: ${challenges.caesar.score}/3`;
+
+          if (
+            challenges.caesar.currentIndex <
+            challenges.caesar.messages.length - 1
+          ) {
+            challenges.caesar.currentIndex++;
+            document.getElementById("caesarChallenge").textContent =
+              challenges.caesar.messages[
+                challenges.caesar.currentIndex
+              ].encrypted;
+          } else {
+            alert(
+              "Congratulations! You completed the Caesar Cipher challenge!"
+            );
+          }
+        } else {
+          alert("Try again!");
+        }
+      }
+
+      // Check Encryption Method guess
+      function checkEncryptionGuess(guess) {
+        const currentExample =
+          challenges.encryption.examples[challenges.encryption.currentIndex];
+
+        if (guess === currentExample.method) {
+          challenges.encryption.score++;
+          document.getElementById(
+            "challenge2Score"
+          ).textContent = `Score: ${challenges.encryption.score}/3`;
+
+          if (
+            challenges.encryption.currentIndex <
+            challenges.encryption.examples.length - 1
+          ) {
+            challenges.encryption.currentIndex++;
+            document.getElementById("encryptionExample").textContent =
+              challenges.encryption.examples[
+                challenges.encryption.currentIndex
+              ].text;
+          } else {
+            alert(
+              "Congratulations! You completed the Encryption Recognition challenge!"
+            );
+          }
+        } else {
+          alert("Try again!");
+        }
+      }
+
+      // Check Decryption answer
+      function checkDecryptAnswer() {
+        const answer = document
+          .getElementById("decryptAnswer")
+          .value.toUpperCase();
+        const currentChallenge =
+          challenges.decrypt.messages[challenges.decrypt.currentIndex];
+
+        if (answer === currentChallenge.answer) {
+          challenges.decrypt.score++;
+          document.getElementById(
+            "challenge3Score"
+          ).textContent = `Score: ${challenges.decrypt.score}/3`;
+
+          if (
+            challenges.decrypt.currentIndex <
+            challenges.decrypt.messages.length - 1
+          ) {
+            challenges.decrypt.currentIndex++;
+            document.getElementById("decryptChallenge").textContent =
+              challenges.decrypt.messages[
+                challenges.decrypt.currentIndex
+              ].encrypted;
+            document.getElementById("decryptHint").style.display = "none";
+          } else {
+            alert("Congratulations! You completed the Decryption challenge!");
+          }
+        } else {
+          alert("Try again!");
+        }
+      }
+
+      // Get hint for challenges
+      // Function to get hint for the current question
+function getHint(challengeType) {
+    const challenge = challenges[challengeType];
+    let hintElement;
+
+    // Determine which hint element to update based on the challenge type
+    if (challengeType === "caesar") {
+        hintElement = document.getElementById("caesarHint");
+    } else if (challengeType === "encryption") {
+        hintElement = document.getElementById("encryptionHint");
+    } else if (challengeType === "decrypt") {
+        hintElement = document.getElementById("decryptHint");
+    }
+
+    if (!hintElement) {
+        alert("Hint element not found!");
+        return;
+    }
+
+    // Display the hint for the current question
+    if (challenge.hintIndex < challenge.hints.length) {
+        hintElement.textContent = `Hint: ${challenge.hints[challenge.hintIndex]}`;
+        hintElement.style.display = "block";
+        challenge.hintIndex++; // Move to the next hint for the next click
+    } else {
+        hintElement.textContent = "No more hints available!";
+    }
+}
+      // Initialize Challenges
+
+      function initializeChallenges() {
+        // Initialize Challenge 1: Caesar Cipher
+        document.getElementById("caesarChallenge").textContent =
+          challenges.caesar.messages[challenges.caesar.currentIndex].encrypted;
+
+        // Initialize Challenge 2: Encryption Recognition
+        document.getElementById("encryptionExample").textContent =
+          challenges.encryption.examples[
+            challenges.encryption.currentIndex
+          ].text;
+
+        // Initialize Challenge 3: Decryption
+        document.getElementById("decryptChallenge").textContent =
+          challenges.decrypt.messages[
+            challenges.decrypt.currentIndex
+          ].encrypted;
+      }
+
+      // Initialize challenges when page loads
+      document.addEventListener("DOMContentLoaded", initializeChallenges);
+    </script>
+  </body>
+</html>
